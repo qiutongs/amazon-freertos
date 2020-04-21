@@ -1693,6 +1693,36 @@
 			<locationURI>AWS_IOT_MCU_ROOT/libraries/freertos_plus/aws/greengrass/include/aws_greengrass_discovery.h</locationURI>
 		</link>
 		<link>
+			<name>libraries/freertos_plus/standard/freertos_plus_cli/source/FreeRTOS_CLI.c</name>
+			<type>1</type>
+			<locationURI>AWS_IOT_MCU_ROOT/libraries/freertos_plus/standard/freertos_plus_cli/source/FreeRTOS_CLI.c</locationURI>
+		</link>
+		<link>
+			<name>libraries/freertos_plus/standard/freertos_plus_cli/source/FreeRTOS_CLI_Console.c</name>
+			<type>1</type>
+			<locationURI>AWS_IOT_MCU_ROOT/libraries/freertos_plus/standard/freertos_plus_cli/source/FreeRTOS_CLI_Console.c</locationURI>
+		</link>
+		<link>
+			<name>libraries/freertos_plus/standard/freertos_plus_cli/include/FreeRTOS_CLI.h</name>
+			<type>1</type>
+			<locationURI>AWS_IOT_MCU_ROOT/libraries/freertos_plus/standard/freertos_plus_cli/include/FreeRTOS_CLI.h</locationURI>
+		</link>
+		<link>
+			<name>libraries/freertos_plus/standard/freertos_plus_cli/include/FreeRTOS_CLI_Console.h</name>
+			<type>1</type>
+			<locationURI>AWS_IOT_MCU_ROOT/libraries/freertos_plus/standard/freertos_plus_cli/include/FreeRTOS_CLI_Console.h</locationURI>
+		</link>
+		<link>
+			<name>libraries/freertos_plus/standard/freertos_plus_cli/uart/FreeRTOS_CLI_UART.c</name>
+			<type>1</type>
+			<locationURI>AWS_IOT_MCU_ROOT/libraries/freertos_plus/standard/freertos_plus_cli/uart/FreeRTOS_CLI_UART.c</locationURI>
+		</link>
+		<link>
+			<name>libraries/freertos_plus/standard/freertos_plus_cli/include/FreeRTOS_CLI_UART.h</name>
+			<type>1</type>
+			<locationURI>AWS_IOT_MCU_ROOT/libraries/freertos_plus/standard/freertos_plus_cli/include/FreeRTOS_CLI_UART.h</locationURI>
+		</link>
+		<link>
 			<name>libraries/c_sdk/aws/defender/test/unit/aws_iot_tests_defender_unit.c</name>
 			<type>1</type>
 			<locationURI>AWS_IOT_MCU_ROOT/libraries/c_sdk/aws/defender/test/unit/aws_iot_tests_defender_unit.c</locationURI>
@@ -2228,11 +2258,6 @@
 			<locationURI>AWS_IOT_MCU_ROOT/libraries/3rdparty/mbedtls/library/error.c</locationURI>
 		</link>
 		<link>
-			<name>libraries/3rdparty/mbedtls_utils/mbedtls_error.c</name>
-			<type>1</type>
-			<locationURI>AWS_IOT_MCU_ROOT/libraries/3rdparty/mbedtls_utils/mbedtls_error.c</locationURI>
-		</link>
-		<link>
 			<name>libraries/3rdparty/mbedtls/library/gcm.c</name>
 			<type>1</type>
 			<locationURI>AWS_IOT_MCU_ROOT/libraries/3rdparty/mbedtls/library/gcm.c</locationURI>
@@ -2648,11 +2673,6 @@
 			<locationURI>AWS_IOT_MCU_ROOT/libraries/3rdparty/mbedtls/include/mbedtls/error.h</locationURI>
 		</link>
 		<link>
-			<name>libraries/3rdparty/mbedtls_utils/mbedtls_error.h</name>
-			<type>1</type>
-			<locationURI>AWS_IOT_MCU_ROOT/libraries/3rdparty/mbedtls_utils/mbedtls_error.h</locationURI>
-		</link>
-		<link>
 			<name>libraries/3rdparty/mbedtls/include/mbedtls/gcm.h</name>
 			<type>1</type>
 			<locationURI>AWS_IOT_MCU_ROOT/libraries/3rdparty/mbedtls/include/mbedtls/gcm.h</locationURI>
@@ -2881,6 +2901,16 @@
 			<name>libraries/3rdparty/mbedtls_utils/mbedtls_utils.c</name>
 			<type>1</type>
 			<locationURI>AWS_IOT_MCU_ROOT/libraries/3rdparty/mbedtls_utils/mbedtls_utils.c</locationURI>
+		</link>
+		<link>
+			<name>libraries/3rdparty/mbedtls_utils/mbedtls_error.h</name>
+			<type>1</type>
+			<locationURI>AWS_IOT_MCU_ROOT/libraries/3rdparty/mbedtls_utils/mbedtls_error.h</locationURI>
+		</link>
+		<link>
+			<name>libraries/3rdparty/mbedtls_utils/mbedtls_error.c</name>
+			<type>1</type>
+			<locationURI>AWS_IOT_MCU_ROOT/libraries/3rdparty/mbedtls_utils/mbedtls_error.c</locationURI>
 		</link>
 		<link>
 			<name>libraries/3rdparty/pkcs11/pkcs11.h</name>
