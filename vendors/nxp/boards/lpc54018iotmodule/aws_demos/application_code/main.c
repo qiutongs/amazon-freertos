@@ -85,6 +85,8 @@
 #include "fsl_power.h"
 #include "mflash_drv.h"
 
+#include "audio_speaker.h"
+
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
@@ -95,6 +97,8 @@
 #define mainLOGGING_TASK_PRIORITY        ( tskIDLE_PRIORITY )
 #define mainLOGGING_TASK_STACK_SIZE      ( configMINIMAL_STACK_SIZE * 4 )
 #define mainLOGGING_QUEUE_LENGTH         ( 16 )
+
+#define AUDIO_PLL_FRACTIONAL_DIVIDER (0x16872b)
 
 /* The task delay for allowing the lower priority logging task to print out Wi-Fi
  * failure status before blocking indefinitely. */
@@ -111,6 +115,7 @@ static void prvWifiConnect( void );
  ******************************************************************************/
 
 extern usb_cdc_vcom_struct_t s_cdcVcom;
+extern void InitDmic( void );
 
 #if ( defined( USB_DEVICE_CONFIG_LPCIP3511FS ) && ( USB_DEVICE_CONFIG_LPCIP3511FS > 0U ) )
     /*-----------------------------------------------------------*/
@@ -173,6 +178,75 @@ void USB_DeviceIsrEnable( void )
 }
 
 
+static void audio_init( void )
+{
+    #if ( defined( USB_DEVICE_CONFIG_LPCIP3511FS ) && ( USB_DEVICE_CONFIG_LPCIP3511FS > 0U ) )
+        pll_config_t audio_pll_config =
+        {
+            .desiredRate = 24576000U, .inputRate = 12000000U,
+        };
+        pll_setup_t audio_pll_setup;
+    #endif
+    #if ( defined( USB_DEVICE_CONFIG_LPCIP3511HS ) && ( USB_DEVICE_CONFIG_LPCIP3511HS > 0U ) )
+        pll_setup_t audio_pll_setup =
+        {
+            .pllctrl = 0U, .pllndec = 514U, .pllpdec = 29U, .pllmdec = 0U, .audpllfrac = AUDIO_PLL_FRACTIONAL_DIVIDER,
+        };
+    #endif
+
+    CLOCK_EnableClock( kCLOCK_InputMux );
+    CLOCK_EnableClock( kCLOCK_Iocon );
+    CLOCK_EnableClock( kCLOCK_Gpio0 );
+    CLOCK_EnableClock( kCLOCK_Gpio1 );
+
+    /* I2C clock */
+    CLOCK_AttachClk( kFRO12M_to_FLEXCOMM2 );
+    #if ( defined( USB_DEVICE_CONFIG_LPCIP3511FS ) && ( USB_DEVICE_CONFIG_LPCIP3511FS > 0U ) )
+        CLOCK_SetupAudioPLLData( &audio_pll_config, &audio_pll_setup );
+        audio_pll_setup.flags = PLL_SETUPFLAG_POWERUP | PLL_SETUPFLAG_WAITLOCK;
+        CLOCK_SetupAudioPLLPrec( &audio_pll_setup, audio_pll_setup.flags );
+    #endif
+    #if ( defined( USB_DEVICE_CONFIG_LPCIP3511HS ) && ( USB_DEVICE_CONFIG_LPCIP3511HS > 0U ) )
+        audio_pll_setup.flags = PLL_SETUPFLAG_POWERUP | PLL_SETUPFLAG_WAITLOCK;
+        SYSCON->AUDPLLCLKSEL =
+            SYSCON_AUDPLLCLKSEL_SEL( 0x01U );                 /* Select the external Crystal CLK_IN instead of FRO_12M for HS*/
+        CLOCK_SetupAudioPLLPrecFract( &audio_pll_setup, audio_pll_setup.flags );
+        SYSCON->SCTCLKSEL = SYSCON_AUDPLLCLKSEL_SEL( 0x03U ); /* Select the AUDIO PLL OUT for SCTimer source under HS*/
+
+        CLOCK_SetClkDiv( kCLOCK_DivSctClk, 1, false );
+
+/*  Configure Clock OUT for measurement
+ *  CLOCK_AttachClk(kAUDIO_PLL_to_CLKOUT);
+ *
+ *  CLOCK_SetClkDiv(kCLOCK_DivClkOut, 1, false);
+ */
+    #endif
+
+    /* DMIC uses 12MHz FRO clock */
+    CLOCK_AttachClk( kFRO12M_to_DMIC );
+
+    /*12MHz divided by 5 = 2.4MHz PDM clock --> gives 48kHz sample rate */
+    /*12MHz divided by 15 = 800 KHz PDM clock --> gives 16kHz sample rate */
+    CLOCK_SetClkDiv( kCLOCK_DivDmicClk, 14, false );
+
+
+    /* I2S clocks */
+    CLOCK_AttachClk( kAUDIO_PLL_to_FLEXCOMM6 );
+    CLOCK_AttachClk( kAUDIO_PLL_to_FLEXCOMM7 );
+    /* Attach PLL clock to MCLK for I2S, no divider */
+    CLOCK_AttachClk( kAUDIO_PLL_to_MCLK );
+    SYSCON->MCLKDIV = SYSCON_MCLKDIV_DIV( 0U );
+    SYSCON->MCLKIO = 1U;
+    /* reset FLEXCOMM for I2C */
+    RESET_PeripheralReset( kFC2_RST_SHIFT_RSTn );
+    /* reset FLEXCOMM for I2S */
+    RESET_PeripheralReset( kFC6_RST_SHIFT_RSTn );
+    RESET_PeripheralReset( kFC7_RST_SHIFT_RSTn );
+    /* Enable interrupts for I2S */
+    EnableIRQ( FLEXCOMM6_IRQn );
+    EnableIRQ( FLEXCOMM7_IRQn );
+}
+
 /*-----------------------------------------------------------*/
 
 int main( void )
@@ -191,6 +265,8 @@ int main( void )
     NVIC_ClearPendingIRQ( USB0_NEEDCLK_IRQn );
     NVIC_ClearPendingIRQ( USB1_IRQn );
     NVIC_ClearPendingIRQ( USB1_NEEDCLK_IRQn );
+
+    audio_init();
 
     BOARD_InitPins();
     BOARD_BootClockFROHF96M();
@@ -224,6 +300,9 @@ int main( void )
     xLoggingTaskInitialize( mainLOGGING_TASK_STACK_SIZE,
                             mainLOGGING_TASK_PRIORITY,
                             mainLOGGING_QUEUE_LENGTH );
+
+    InitDmic();
+    Init_Board_Sai_Codec();
 
     vTaskStartScheduler();
 

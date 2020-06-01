@@ -233,6 +233,31 @@
 			<locationURI>BASE_DIR/vendors/nxp/LPC54018/drivers/fsl_spi_dma.c</locationURI>
 		</link>
 		<link>
+			<name>vendors/nxp/LPC54018/drivers/fsl_i2s_dma.c</name>
+			<type>1</type>
+			<locationURI>BASE_DIR/vendors/nxp/LPC54018/drivers/fsl_i2s_dma.c</locationURI>
+		</link>
+		<link>
+			<name>vendors/nxp/LPC54018/drivers/fsl_i2s.c</name>
+			<type>1</type>
+			<locationURI>BASE_DIR/vendors/nxp/LPC54018/drivers/fsl_i2s.c</locationURI>
+		</link>
+		<link>
+			<name>vendors/nxp/LPC54018/drivers/fsl_i2c.c</name>
+			<type>1</type>
+			<locationURI>BASE_DIR/vendors/nxp/LPC54018/drivers/fsl_i2c.c</locationURI>
+		</link>
+		<link>
+			<name>vendors/nxp/LPC54018/drivers/fsl_dmic_dma.c</name>
+			<type>1</type>
+			<locationURI>BASE_DIR/vendors/nxp/LPC54018/drivers/fsl_dmic_dma.c</locationURI>
+		</link>
+		<link>
+			<name>vendors/nxp/LPC54018/drivers/fsl_dmic.c</name>
+			<type>1</type>
+			<locationURI>BASE_DIR/vendors/nxp/LPC54018/drivers/fsl_dmic.c</locationURI>
+		</link>
+		<link>
 			<name>vendors/nxp/LPC54018/drivers/fsl_spifi.c</name>
 			<type>1</type>
 			<locationURI>BASE_DIR/vendors/nxp/LPC54018/drivers/fsl_spifi.c</locationURI>

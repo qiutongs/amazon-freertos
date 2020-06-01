@@ -43,6 +43,9 @@
 #include "fsl_inputmux.h"
 #include "fsl_inputmux_connections.h"
 
+#define DEMO_PINT_PIN_INT0_SRC kINPUTMUX_GpioPort0Pin6ToPintsel
+
+extern void button_callback(pint_pin_int_t pintr, uint32_t pmatch_status);
 static void PINT_callback(pint_pin_int_t pintr, uint32_t pmatch_status);
 
 /*!
@@ -79,18 +82,24 @@ A_STATUS WIFISHIELD_Init(void)
     /* Set up Inputmux */
     INPUTMUX_Init(INPUTMUX);
     INPUTMUX_AttachSignal(INPUTMUX, WIFISHIELD_WLAN_PINT, WIFISHIELD_WLAN_PINT_CONNECT);
+    // BBA add this to track the button
+    INPUTMUX_AttachSignal(INPUTMUX, kPINT_PinInt0, DEMO_PINT_PIN_INT0_SRC);
     INPUTMUX_Deinit(INPUTMUX);
 
     /* Set up PINT for WLAN_IRQ */
     PINT_Init(PINT);
     PINT_PinInterruptConfig(PINT, WIFISHIELD_WLAN_PINT, WIFISHIELD_WLAN_PINT_EDGE, PINT_callback);
+    /* Setup Pin Interrupt 0 for rising edge */
+    PINT_PinInterruptConfig(PINT, kPINT_PinInt0, kPINT_PinIntEnableRiseEdge, button_callback);
     PINT_EnableCallback(PINT);
 
     /* Enable NVIC interrupt for WLAN_IRQ */
     NVIC_EnableIRQ(WIFISHIELD_WLAN_PINT_IRQ);
+    NVIC_EnableIRQ(PIN_INT0_IRQn);
 
     /* Set NVIC priority if is required by Freertos */
     NVIC_SetPriority(WIFISHIELD_WLAN_PINT_IRQ, WIFISHIELD_WLAN_IRQ_PRIORITY);
+    NVIC_SetPriority(PIN_INT0_IRQn, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 1);
 
     return A_OK;
 }
